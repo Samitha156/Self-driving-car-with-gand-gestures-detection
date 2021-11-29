@@ -27,7 +27,7 @@ from picamera import PiCamera
 import tensorflow as tf
 import argparse
 import sys
-
+import datetime
 # Set up camera constants
 IM_WIDTH = 1280
 IM_HEIGHT = 720
@@ -119,6 +119,12 @@ font = cv2.FONT_HERSHEY_SIMPLEX
 # for USB.
 
 ### Picamera ###
+
+def Method_Class1():
+    pass
+def Method_Class2():
+    pass
+
 if camera_type == 'picamera':
     # Initialize Picamera and grab reference to the raw capture
     camera = PiCamera()
@@ -126,7 +132,7 @@ if camera_type == 'picamera':
     camera.framerate = 10
     rawCapture = PiRGBArray(camera, size=(IM_WIDTH,IM_HEIGHT))
     rawCapture.truncate(0)
-
+    file_log = open("SSD_LOG_"+str(datetime.datetime.now())+"_.txt","w")
     for frame1 in camera.capture_continuous(rawCapture, format="bgr",use_video_port=True):
 
         t1 = cv2.getTickCount()
@@ -141,7 +147,7 @@ if camera_type == 'picamera':
         (boxes, scores, classes, num) = sess.run(
             [detection_boxes, detection_scores, detection_classes, num_detections],
             feed_dict={image_tensor: frame_expanded})
-
+        file_log.write(" BOXES : "+str(boxes)+";;;"+" SCORES : "+str(scores)+";;;"+" CLASSES : "+str(classes)+";;;"+" NUM : "+str(num)+";;;")
         # Draw the results of the detection (aka 'visulaize the results')
         vis_util.visualize_boxes_and_labels_on_image_array(
             frame,
@@ -164,8 +170,8 @@ if camera_type == 'picamera':
 
         # Press 'q' to quit
         if cv2.waitKey(1) == ord('q'):
+            file_log.close()
             break
-
         rawCapture.truncate(0)
 
     camera.close()
